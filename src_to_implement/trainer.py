@@ -11,7 +11,7 @@ class Trainer:
                  optim=None,                   # Optimizer
                  train_dl=None,                # Training data set
                  val_test_dl=None,             # Validation (or test) data set
-                 cuda=False,                    # Whether to use the GPU
+                 cuda=True,                    # Whether to use the GPU
                  early_stopping_patience=-1):  # The patience for early stopping
         self._model = model
         self._crit = crit
@@ -257,7 +257,10 @@ class Trainer:
                 
                 if self.best_val_fit > self.curr_f1:
                     self.best_val_fit = self.curr_f1
-                    t.save(self._model.state_dict(),"local_best_model.pt")
+                    t.save(
+                        self._model.state_dict(),
+                        "/content/drive/MyDrive/local_best_model.pt"
+                        )
                 if epoch > self._early_stopping_patience and np.max(val_loss[-2:-1])>avg_val_loss:
                     break
                 train_loss.append(avg_train_loss)
