@@ -31,7 +31,7 @@ class Trainer:
         
         self.all_labels = None
         self.all_outputs = None
-        self.all_predictions = None
+        self.all_predictions = []
         
         
         self.crack_f1=0
@@ -46,6 +46,7 @@ class Trainer:
         
         self.best_val_fit = -1
         self.curr_f1 = 0
+        
             
     def save_checkpoint(self, epoch):
         t.save({'state_dict': self._model.state_dict()}, 'checkpoints/checkpoint_{:03d}.ckp'.format(epoch))
