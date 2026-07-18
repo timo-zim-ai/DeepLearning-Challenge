@@ -191,9 +191,14 @@ class Trainer:
         
         ## Binarisieren fuer OneHot 
         ## geht das????/
-        self.all_predictions[:,0] = (self.all_outputs[:,0] >= 0.5).int()
-        self.all_predictions[:,1] = (self.all_outputs[:,1] >= 0.45).int()
-        
+        self.all_predictions = t.zeros_like(self.all_outputs, dtype=t.int)
+
+        # crack
+        self.all_predictions[:, 0] = (self.all_outputs[:, 0] >= 0.5).int()
+
+        # inactive
+        self.all_predictions[:, 1] = (self.all_outputs[:, 1] >= 0.45).int()
+
         
         self.all_labels = self.all_labels.numpy()
         self.all_predictions = self.all_predictions.numpy()
