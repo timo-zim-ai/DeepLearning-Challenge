@@ -223,10 +223,7 @@ class Trainer:
         self.crack_f1 = classf1[0]
         self.inactive_f1 = classf1[0]
         self.curr_f1 = classf1.mean()
-        
-        if self.curr_f1 > self.best_val_fit:
-            self.best_val_fit = self.curr_f1
-            self.save_checkpoint("best")
+       
       #  losses = np.array(losses)
        # avg_loss = np.mean(losses)   
         print("====== both Classes =======")
@@ -273,8 +270,10 @@ class Trainer:
             # return the losses for both training and validation
                 avg_train_loss = self.train_epoch()
                 avg_val_loss = self.val_test()
-                self.save_checkpoint(epoch=epoch)
-                
+                            
+                if self.curr_f1 > self.best_val_fit:
+                    self.best_val_fit = self.curr_f1
+                    self.save_checkpoint(epoch=epoch)
                 # if self.best_val_fit > self.curr_f1:
                 #     self.best_val_fit = self.curr_f1
                 #     t.save(
