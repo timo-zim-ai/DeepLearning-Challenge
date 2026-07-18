@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Modelle
+*.pt
+*.pth
+*.ckp
+
+# Conda
+.env
+.venv
+venv/
+
+# VS Code
+.vscode/
+
+# Windows
+Thumbs.db
+.DS_Store
