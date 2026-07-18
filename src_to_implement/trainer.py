@@ -221,7 +221,7 @@ class Trainer:
         
         
         self.crack_f1 = classf1[0]
-        self.inactive_f1 = classf1[0]
+        self.inactive_f1 = classf1[1]
         self.curr_f1 = classf1.mean()
        
       #  losses = np.array(losses)
