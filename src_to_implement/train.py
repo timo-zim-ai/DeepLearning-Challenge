@@ -50,7 +50,7 @@ res = ResNet()
 criterion = nn.BCELoss()
 optimizer = t.optim.Adam(res.parameters(),lr = 1e-3, weight_decay=1e-4)
 
-trainer = Trainer(model=res,crit=criterion,optim=optimizer,train_dl=train_loader,val_test_dl=val_loader,early_stopping_patience=8)
+trainer = Trainer(model=res,crit=criterion,optim=optimizer,train_dl=train_loader,val_test_dl=val_loader,early_stopping_patience=30)
 # go, go, go... call fit on trainer
 res = trainer.fit(50)
 
