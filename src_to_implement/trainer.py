@@ -45,7 +45,7 @@ class Trainer:
         
         
         self.best_val_fit = -1
-        self.curr_f1 = 10
+        self.curr_f1 = 0
             
     def save_checkpoint(self, epoch):
         t.save({'state_dict': self._model.state_dict()}, 'checkpoints/checkpoint_{:03d}.ckp'.format(epoch))
@@ -188,8 +188,10 @@ class Trainer:
         self.all_labels = t.cat(curr_labels, dim=0)     
         self.all_outputs = t.cat(curr_outputs, dim=0)     
         
-        ## Binarisieren fuer OneHot
-        self.all_predictions = (self.all_outputs >= 0.5).int()
+        ## Binarisieren fuer OneHot 
+        ## geht das????/
+        self.all_predictions[:,0] = (self.all_outputs[:,0] >= 0.5).int()
+        self.all_predictions[:,1] = (self.all_outputs[:,1] >= 0.45).int()
         
         
         self.all_labels = self.all_labels.numpy()
@@ -205,21 +207,32 @@ class Trainer:
         
         
         
-        self.curr_f1 = f1_score(self.all_labels,self.all_predictions, average="macro")
+       # self.curr_f1 = f1_score(self.all_labels,self.all_predictions, average="macro")
+        #self.crack_f1 = f1_score(true_crack,pred_crack)
+        #self.inactive_f1 =f1_score(true_inactive,pred_inactive)
         
-
+        classf1 = f1_score(self.all_labels,self.all_predictions,average=None)
+        
+        
+        self.crack_f1 = classf1[0]
+        self.inactive_f1 = classf1[0]
+        self.curr_f1 = classf1.mean()
+        
+        if self.curr_f1 > self.best_val_fit:
+            self.best_val_fit = self.curr_f1
+            self.save_checkpoint("best")
       #  losses = np.array(losses)
        # avg_loss = np.mean(losses)   
-        print("====== both ==========")
+        print("====== both Classes =======")
         print("macro f1: ",self.curr_f1)
         #print("samples f1:", f1_score(self.all_labels,self.all_predictions, average = "samples"))
         print("========================")
         print("======= crack ==========")
-        print("macro f1: ",f1_score(true_crack,pred_crack, average="macro"))
+        print("macro f1: ",self.crack_f1)
       #  print("samples f1: ",f1_score(true_crack,pred_crack, average = "samples"))
         print("========================")
         print("======== inactive=======")
-        print("macro f1: ", f1_score(true_inactive,pred_inactive, average="macro"))
+        print("macro f1: ", self.inactive_f1)
        # print("samples f1: ",f1_score(true_inactive,pred_inactive, average = "samples"))
         print("========================")
         print("========================")
@@ -256,13 +269,13 @@ class Trainer:
                 avg_val_loss = self.val_test()
                 self.save_checkpoint(epoch=epoch)
                 
-                if self.best_val_fit > self.curr_f1:
-                    self.best_val_fit = self.curr_f1
-                    t.save(
-                        self._model.state_dict(),
-                        "/content/drive/MyDrive/local_best_model.pt"
-                        )
-                if epoch > self._early_stopping_patience and np.max(val_loss[-2:-1])>avg_val_loss:
+                # if self.best_val_fit > self.curr_f1:
+                #     self.best_val_fit = self.curr_f1
+                #     t.save(
+                #         self._model.state_dict(),
+                #         "/content/drive/MyDrive/local_best_model.pt"
+                #         )
+                if epoch > self._early_stopping_patience and val_loss[-3]<val_loss[-2] and val_loss[-2]<val_loss[-1] and val_loss[-1] < avg_val_loss:
                     break
                 train_loss.append(avg_train_loss)
                 val_loss.append(avg_val_loss)
