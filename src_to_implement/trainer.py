@@ -49,25 +49,25 @@ class Trainer:
     def save_checkpoint(self, epoch):
         t.save({'state_dict': self._model.state_dict()}, 'checkpoints/checkpoint_{:03d}.ckp'.format(epoch))
     
-    def restore_checkpoint(self, epoch_n):
-        ckp = t.load('checkpoints/checkpoint_{:03d}.ckp'.format(epoch_n), 'cuda' if self._cuda else None)
-        self._model.load_state_dict(ckp['state_dict'])
+    # def restore_checkpoint(self, epoch_n):
+    #     ckp = t.load('checkpoints/checkpoint_{:03d}.ckp'.format(epoch_n), 'cuda' if self._cuda else None)
+    #     self._model.load_state_dict(ckp['state_dict'])
         
-    def save_onnx(self, fn):
-        m = self._model.cpu()
-        m.eval()
-        x = t.randn(1, 3, 300, 300, requires_grad=True)
-        y = self._model(x)
-        t.onnx.export(m,                 # model being run
-              x,                         # model input (or a tuple for multiple inputs)
-              fn,                        # where to save the model (can be a file or file-like object)
-              export_params=True,        # store the trained parameter weights inside the model file
-              opset_version=10,          # the ONNX version to export the model to
-              do_constant_folding=True,  # whether to execute constant folding for optimization
-              input_names = ['input'],   # the model's input names
-              output_names = ['output'], # the model's output names
-              dynamic_axes={'input' : {0 : 'batch_size'},    # variable lenght axes
-                            'output' : {0 : 'batch_size'}})
+    # def save_onnx(self, fn):
+    #     m = self._model.cpu()
+    #     m.eval()
+    #     x = t.randn(1, 3, 300, 300, requires_grad=True)
+    #     y = self._model(x)
+    #     t.onnx.export(m,                 # model being run
+    #           x,                         # model input (or a tuple for multiple inputs)
+    #           fn,                        # where to save the model (can be a file or file-like object)
+    #           export_params=True,        # store the trained parameter weights inside the model file
+    #           opset_version=10,          # the ONNX version to export the model to
+    #           do_constant_folding=True,  # whether to execute constant folding for optimization
+    #           input_names = ['input'],   # the model's input names
+    #           output_names = ['output'], # the model's output names
+    #           dynamic_axes={'input' : {0 : 'batch_size'},    # variable lenght axes
+    #                         'output' : {0 : 'batch_size'}})
             
     def train_step(self, x, y):
         # perform following steps:
