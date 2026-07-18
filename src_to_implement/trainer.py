@@ -34,7 +34,8 @@ class Trainer:
         self.all_predictions = None
         
         
-        
+        self.crack_f1=0
+        self.inactive_f1=0
         
         self.true_crack = None
         self.pred_crack = None
@@ -211,7 +212,7 @@ class Trainer:
        # avg_loss = np.mean(losses)   
         print("====== both ==========")
         print("macro f1: ",self.curr_f1)
-        print("samples f1:", f1_score(self.all_labels,self.all_predictions, average = "samples"))
+        #print("samples f1:", f1_score(self.all_labels,self.all_predictions, average = "samples"))
         print("========================")
         print("======= crack ==========")
         print("macro f1: ",f1_score(true_crack,pred_crack, average="macro"))
@@ -266,6 +267,20 @@ class Trainer:
                 train_loss.append(avg_train_loss)
                 val_loss.append(avg_val_loss)
                 epoch+=1
+            
+            print("Train Loss: ",avg_train_loss)
+            print("val Loss: ",avg_val_loss)
+            
+            with open("training_log.txt", "a") as f:
+                f.write("=" * 50 + "\n")
+                f.write(f"Epoch {epoch}\n")
+                f.write(f"Train Loss:      {avg_train_loss:.4f}\n")
+                f.write(f"Validation Loss: {avg_val_loss:.4f}\n")
+                f.write(f"Macro F1:        {self.curr_f1:.4f}\n")
+                f.write(f"Crack F1:        {self.crack_f1:.4f}\n")
+                f.write(f"Inactive F1:     {self.inactive_f1:.4f}\n")
+                f.write("\n")
+            
             
         return train_loss, val_loss
                     
