@@ -280,7 +280,7 @@ class Trainer:
                 #         self._model.state_dict(),
                 #         "/content/drive/MyDrive/local_best_model.pt"
                 #         )
-                if epoch > self._early_stopping_patience and val_loss[-3]<val_loss[-2] and val_loss[-2]<val_loss[-1] and val_loss[-1] < avg_val_loss:
+                if epoch == epochs or epoch > self._early_stopping_patience and val_loss[-3]<val_loss[-2] and val_loss[-2]<val_loss[-1] and val_loss[-1] < avg_val_loss:
                     break
                 train_loss.append(avg_train_loss)
                 val_loss.append(avg_val_loss)
