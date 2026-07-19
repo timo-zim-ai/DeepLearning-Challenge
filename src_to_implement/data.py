@@ -41,11 +41,11 @@ class ChallengeDataset(Dataset):
            # tv.transforms.RandomAutocontrast(0.1),
             tv.transforms.RandomVerticalFlip(0.3),
             tv.transforms.RandomHorizontalFlip(0.3),
-            tv.transforms.RandomApply([
-                 tv.transforms.GaussianBlur(kernel_size=5,
-                                            sigma=(0.1,0.5))
+          #  tv.transforms.RandomApply([
+           #      tv.transforms.GaussianBlur(kernel_size=5,
+            #                                sigma=(0.1,0.5))
                 
-            ],p=0.2),
+            #],p=0.2),
           #  tv.transforms.RandomInvert(0.2),
             
             tv.transforms.ToTensor(),
