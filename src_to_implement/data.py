@@ -32,13 +32,13 @@ class ChallengeDataset(Dataset):
             tv.transforms.ToPILImage(),
             
             # ### Bild Augmentationen
-            tv.transforms.RandomEqualize(0.1),
+          #  tv.transforms.RandomEqualize(0.1),
             # tv.transforms.RandomAffine(
             #     degrees=0,
             #     translate=(0.05,0.05),
             #     scale=(0.9,1.1)
             # ),
-            tv.transforms.RandomAutocontrast(0.1),
+           # tv.transforms.RandomAutocontrast(0.1),
             tv.transforms.RandomVerticalFlip(0.3),
             tv.transforms.RandomHorizontalFlip(0.3),
             tv.transforms.RandomApply([
@@ -46,7 +46,7 @@ class ChallengeDataset(Dataset):
                                             sigma=(0.1,0.5))
                 
             ],p=0.2),
-            tv.transforms.RandomInvert(0.2),
+          #  tv.transforms.RandomInvert(0.2),
             
             tv.transforms.ToTensor(),
             tv.transforms.Normalize(mean=train_mean,std=train_std)
