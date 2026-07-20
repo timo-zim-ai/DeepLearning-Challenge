@@ -112,7 +112,7 @@ class ResNet(nn.Module):
         X = self.resblock4(X)
         X = self.GlobalAvgPool(X)
         X = self.flatten(X)
-        X = self.dropout(X)
+        #X = self.dropout(X)
         X = self.fc(X)
         X = self.sigmoid(X)
         return X

@@ -47,6 +47,9 @@ class Trainer:
         self.best_val_fit = -1
         self.curr_f1 = 0
         
+        
+        self.scheduler = t.optim.lr_scheduler.ReduceLROnPlateau(optimizer=self._optim,mode="max",factor=0.3, patience=3,min_lr=1e-6)
+        
             
     def save_checkpoint(self, epoch):
         t.save({'state_dict': self._model.state_dict()}, 'checkpoints/checkpoint_{:03d}.ckp'.format(epoch))
@@ -287,11 +290,21 @@ class Trainer:
                 #         self._model.state_dict(),
                 #         "/content/drive/MyDrive/local_best_model.pt"
                 #         )
+                
+                self.scheduler.step(self.curr_f1)
+                
+                current_lr = self._optim.param_groups[0]["lr"]
                 if epoch == epochs or epoch > self._early_stopping_patience and val_loss[-3]<val_loss[-2] and val_loss[-2]<val_loss[-1] and val_loss[-1] < avg_val_loss:
                     break
                 train_loss.append(avg_train_loss)
                 val_loss.append(avg_val_loss)
                 epoch+=1
+            
+                print(
+        f"Epoch {epoch}: "
+        f"Val F1={self.curr_f1:.4f}, "
+        f"LR={current_lr:.8f}"
+    )
             
             print("Train Loss: ",avg_train_loss)
             print("val Loss: ",avg_val_loss)
