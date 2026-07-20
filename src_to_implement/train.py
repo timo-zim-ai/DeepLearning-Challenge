@@ -51,9 +51,9 @@ criterion = nn.BCELoss()
 
 optimizer = t.optim.Adam(res.parameters(),lr = 1e-3, weight_decay=1e-4)
 
-trainer = Trainer(model=res,crit=criterion,optim=optimizer,train_dl=train_loader,val_test_dl=val_loader,early_stopping_patience=30,cuda=True)
+trainer = Trainer(model=res,crit=criterion,optim=optimizer,train_dl=train_loader,val_test_dl=val_loader,early_stopping_patience=10,cuda=True)
 # go, go, go... call fit on trainer
-res = trainer.fit(50)
+res = trainer.fit(80)
 
 # plot the results
 plt.plot(np.arange(len(res[0])), res[0], label='train loss')

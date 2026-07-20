@@ -44,12 +44,13 @@ class Trainer:
         self.pred_inactive = None
         
         
-        self.best_val_fit = -1
+        self.best_val_fit = float("-inf")
         self.curr_f1 = 0
         
         
-        self.scheduler = t.optim.lr_scheduler.ReduceLROnPlateau(optimizer=self._optim,mode="max",factor=0.3, patience=3,min_lr=1e-6)
+        self.scheduler = t.optim.lr_scheduler.ReduceLROnPlateau(optimizer=self._optim,mode="max",factor=0.3, patience=4,min_lr=1e-6)
         
+        self.counter =0
             
     def save_checkpoint(self, epoch):
         t.save({'state_dict': self._model.state_dict()}, 'checkpoints/checkpoint_{:03d}.ckp'.format(epoch))
@@ -284,6 +285,13 @@ class Trainer:
                 if self.curr_f1 > self.best_val_fit:
                     self.best_val_fit = self.curr_f1
                     self.save_checkpoint(epoch=epoch)
+                    self.counter = 0
+                    
+                else:
+                    self.counter+=1
+                    if self.counter >=self._early_stopping_patience:
+                        print("No decrease of f1")
+                        break
                 # if self.best_val_fit > self.curr_f1:
                 #     self.best_val_fit = self.curr_f1
                 #     t.save(
@@ -294,6 +302,17 @@ class Trainer:
                 self.scheduler.step(self.curr_f1)
                 
                 current_lr = self._optim.param_groups[0]["lr"]
+                
+                if self.curr_f1 > self.best_val_fit:
+                    self.best_val_fit = self.curr_f1
+                    self.counter = 0
+                
+                
+                
+                
+                
+                
+                
                 if epoch == epochs or epoch > self._early_stopping_patience and val_loss[-3]<val_loss[-2] and val_loss[-2]<val_loss[-1] and val_loss[-1] < avg_val_loss:
                     break
                 train_loss.append(avg_train_loss)
