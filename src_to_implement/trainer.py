@@ -2,7 +2,7 @@ import torch as t
 from sklearn.metrics import f1_score
 from tqdm.autonotebook import tqdm
 import numpy as np
-
+import os
 class Trainer:
 
     def __init__(self,
@@ -52,7 +52,8 @@ class Trainer:
         t.save({'state_dict': self._model.state_dict()}, 'checkpoints/checkpoint_{:03d}.ckp'.format(epoch))
     
     def restore_checkpoint(self, epoch_n):
-        ckp = t.load('checkpoints/checkpoint_{:03d}.ckp'.format(epoch_n), 'cuda' if self._cuda else None)
+       
+        ckp = t.load('checkpoints/checkpoint_{:03d}.ckp'.format(epoch_n), map_location="cpu")#,'cuda' if self._cuda else None)
         self._model.load_state_dict(ckp['state_dict'])
         
     def save_onnx(self, fn):
@@ -89,6 +90,12 @@ class Trainer:
         
         ### Forward + Backward + optimize
         outputs = self._model(inputs)
+        
+        
+        ### labels smoothing
+        epsilon = 0.05
+        
+        #smooth_labels = labels * (1.0 - epsilon) + 0.5 * epsilon
         
         ### Calculate the loss
         loss = self._crit(outputs,labels)
@@ -197,7 +204,7 @@ class Trainer:
         self.all_predictions[:, 0] = (self.all_outputs[:, 0] >= 0.5).int()
 
         # inactive
-        self.all_predictions[:, 1] = (self.all_outputs[:, 1] >= 0.45).int()
+        self.all_predictions[:, 1] = (self.all_outputs[:, 1] >= 0.5).int()
 
         
         self.all_labels = self.all_labels.numpy()

@@ -24,6 +24,8 @@ class ResBlock(nn.Module):
         self.relu = nn.ReLU()
         self.downsample = None
         
+        
+
         # if self.stride != 1 or in_channel != out_channel:
         #     print("Test")
         #     self.downsample = nn.Sequential(
@@ -93,10 +95,12 @@ class ResNet(nn.Module):
         self.GlobalAvgPool = nn.AdaptiveAvgPool2d((1,1))
 
         self.flatten = nn.Flatten(start_dim=1)
-        
+        self.dropout = nn.Dropout(p=0.25)
         self.fc = nn.Linear(512,2)
 
         self.sigmoid = nn.Sigmoid()
+
+        self.dropout = nn.Dropout(p=0.25)
         
     def forward(self,X):
         X = self.hidden(X)
@@ -108,6 +112,7 @@ class ResNet(nn.Module):
         X = self.resblock4(X)
         X = self.GlobalAvgPool(X)
         X = self.flatten(X)
+        X = self.dropout(X)
         X = self.fc(X)
         X = self.sigmoid(X)
         return X
