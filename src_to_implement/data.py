@@ -8,7 +8,8 @@ import torchvision as tv
 from skimage.color import gray2rgb
 import cv2
 import os
-
+import random
+import torchvision.transforms.functional as TF
 train_mean = [0.59685254, 0.59685254, 0.59685254]
 train_std = [0.16043035, 0.16043035, 0.16043035]
 
@@ -30,7 +31,6 @@ class ChallengeDataset(Dataset):
         
         self._transform_train  = tv.transforms.Compose([
             tv.transforms.ToPILImage(),
-            
             # ### Bild Augmentationen
           #  tv.transforms.RandomEqualize(0.1),
             # tv.transforms.RandomAffine(
@@ -47,7 +47,23 @@ class ChallengeDataset(Dataset):
                 
             #],p=0.2),
           #  tv.transforms.RandomInvert(0.2),
-            
+          
+            tv.transforms.RandomApply([
+                RandomGamma((0.8,1.2))
+            ],p=0.4),
+          
+          
+            tv.transforms.RandomApply([
+                tv.transforms.ColorJitter(
+                    brightness = 0.1,
+                    contrast=0.25
+                )
+            ], p=0.25),
+            tv.transforms.RandomAutocontrast(p=0.25),
+            tv.transforms.RandomAdjustSharpness(
+                sharpness_factor=1.5,
+                p=0.25
+            ),
             tv.transforms.ToTensor(),
             tv.transforms.Normalize(mean=train_mean,std=train_std)
             ])
@@ -88,3 +104,10 @@ class ChallengeDataset(Dataset):
         
         return img, labels
         
+class RandomGamma:
+    def __init__(self, gamma_range=(0.8, 1.2)):
+        self.gamma_range = gamma_range
+
+    def __call__(self, image):
+        gamma = random.uniform(*self.gamma_range)
+        return TF.adjust_gamma(image, gamma)

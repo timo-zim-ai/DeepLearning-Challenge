@@ -117,4 +117,30 @@ class ResNet(nn.Module):
         X = self.sigmoid(X)
         return X
 
-        
+import torch
+import torch.nn as nn
+from torchvision.models import resnet18, ResNet18_Weights
+
+
+class PretrainedResNet(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        # Lädt auf ImageNet vortrainierte Gewichte
+        self.backbone = resnet18(
+            weights=ResNet18_Weights.DEFAULT
+        )
+
+        # Ursprünglicher Layer: 512 -> 1000 Klassen
+        num_features = self.backbone.fc.in_features
+
+        # Neuer Multi-Label-Kopf: 512 -> 2 Klassen
+        self.backbone.fc = nn.Linear(num_features, 2)
+
+        # Beibehalten, solange dein Trainer BCELoss verwendet
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        logits = self.backbone(x)
+        probabilities = self.sigmoid(logits)
+        return probabilities
